@@ -30,22 +30,6 @@ class Book {
     }
 }
 
-class BookDetails extends React.Component {
-
-    static navigationOptions ={
-        title: 'Details',
-    };
-
-    constructor(props){
-        super(props);
-    }
-
-    render() {
-
-    }
-
-
-}
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
@@ -83,9 +67,8 @@ class ListBooksScreen extends React.Component {
     }
 
     goToDetails(book){
-        // navigate('BookDetails',{book: book});
-        // Alert.alert("Ce faci handicapatule?");
-        Alert.alert(book.author);
+        const { navigate } = this.props.navigation;
+        navigate('BookDetails',{book: book});
     }
 
     render(){
@@ -94,7 +77,14 @@ class ListBooksScreen extends React.Component {
                 {
                     <FlatList
                         data={this.books}
-                        renderItem={({item}) => <TouchableOpacity style={styles.listitm} onPress={()=>this.goToDetails(item.bk)}><Text>{item.bk.title}</Text></TouchableOpacity>}
+                        renderItem={({item}) =>
+                            <TouchableOpacity
+                                style={styles.listitm}
+                                onPress={() => this.goToDetails(item.bk)}
+                            >
+                                <Text>{item.bk.title}</Text>
+                            </TouchableOpacity>
+                        }
                     />
                 }
             </View>
@@ -134,7 +124,7 @@ class AddBookScreen extends React.Component {
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({title: text})}
-                    value={this.state.text}
+                    value={this.state.title}
                 />
                 <Text>
                     Author:
@@ -142,7 +132,7 @@ class AddBookScreen extends React.Component {
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({author: text})}
-                    value={this.state.text}
+                    value={this.state.author}
                 />
                 <Text>
                     Course:
@@ -150,7 +140,7 @@ class AddBookScreen extends React.Component {
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({course: text})}
-                    value={this.state.text}
+                    value={this.state.course}
                 />
                 <Text>
                     Email:
@@ -158,7 +148,7 @@ class AddBookScreen extends React.Component {
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({email: text})}
-                    value={this.state.text}
+                    value={this.state.email}
                 />
                 <Button
                     raised
@@ -171,10 +161,64 @@ class AddBookScreen extends React.Component {
     }
 }
 
+class BookDetailsScreen extends React.Component {
+
+    static navigationOptions ={
+        title: 'Details',
+    };
+
+    constructor(props){
+        super(props);
+        bookTmp = props.navigation.state.params.book;
+        this.state = {title: bookTmp.title, author: bookTmp.author, course: bookTmp.course, email: bookTmp.email};
+    }
+
+    render() {
+        return(
+            <View>
+                <Text>
+                    Title:
+                </Text>
+                <TextInput
+                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                    onChangeText={(text) => this.setState({title: text})}
+                    value={this.state.title}
+                />
+                <Text>
+                    Author:
+                </Text>
+                <TextInput
+                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                    onChangeText={(text) => this.setState({author: text})}
+                    value={this.state.author}
+                />
+                <Text>
+                    Course:
+                </Text>
+                <TextInput
+                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                    onChangeText={(text) => this.setState({course: text})}
+                    value={this.state.course}
+                />
+                <Text>
+                    Email:
+                </Text>
+                <TextInput
+                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                    onChangeText={(text) => this.setState({email: text})}
+                    value={this.state.email}
+                />
+
+            </View>
+        );
+    }
+}
+
 const SimpleApp = StackNavigator({
     Home: { screen: HomeScreen },
     AddBook: { screen: AddBookScreen },
     ListBooks: { screen: ListBooksScreen},
+    BookDetails: { screen: BookDetailsScreen},
 });
 
 export default class App extends React.Component {
