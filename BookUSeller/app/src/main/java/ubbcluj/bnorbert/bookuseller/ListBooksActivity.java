@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-
+//TODO: Manager
 public class ListBooksActivity extends AppCompatActivity {
 
     @Override
