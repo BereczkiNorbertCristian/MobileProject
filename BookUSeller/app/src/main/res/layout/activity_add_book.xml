@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ubbcluj.bnorbert.bookuseller.AddBookActivity">
+    tools:context="ubbcluj.bnorbert.bookuseller.activities.AddBookActivity">
 
     <LinearLayout
         android:layout_width="344dp"
@@ -52,6 +52,15 @@
             android:ems="10"
             android:inputType="textEmailAddress"
             android:text="seller@email.com" />
+
+        <EditText
+            android:id="@+id/publishingDateEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:focusable="false"
+            android:hint="Publishing date"
+            android:inputType="date" />
 
         <Button
             android:id="@+id/addBookButton"

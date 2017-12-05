@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddBookActivity"
+            android:name=".activities.AddBookActivity"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -26,7 +26,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".ListBooksActivity"
+            android:name=".activities.ListBooksActivity"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -35,13 +35,13 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".DetailedViewActivity"
-            android:parentActivityName=".ListBooksActivity">
+            android:name=".activities.DetailedViewActivity"
+            android:parentActivityName=".activities.ListBooksActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ListBooksActivity" />
+                android:value=".activities.ListBooksActivity" />
         </activity>
     </application>
 

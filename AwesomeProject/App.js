@@ -135,6 +135,7 @@ class AddBookScreen extends React.Component {
                     value={this.state.author}
                 />
                 <Text>
+
                     Course:
                 </Text>
                 <TextInput
