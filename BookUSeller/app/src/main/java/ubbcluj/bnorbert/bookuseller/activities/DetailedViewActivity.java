@@ -2,6 +2,7 @@ package ubbcluj.bnorbert.bookuseller.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -119,7 +120,11 @@ public class DetailedViewActivity extends AppCompatActivity implements DatePicke
         entries.add(new PieEntry(getAveragePrice(),"Average price"));
         entries.add(new PieEntry(Float.parseFloat(priceET.getText().toString()),"This book's price"));
         PieDataSet pieDataSet = new PieDataSet(entries, "Price comparison");
-        pieDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
+//        pieDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        List<Integer> cols = new ArrayList<>();
+        cols.add(Color.BLUE);
+        cols.add(Color.RED);
+        pieDataSet.setColors(cols);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
     }
