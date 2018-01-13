@@ -8,24 +8,21 @@ export class DetailViewBook extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            uid: this.props.navigation.state.params.uid,
             title: this.props.navigation.state.params.book.title,
             price: this.props.navigation.state.params.book.price,
             sellerEmail: this.props.navigation.state.params.book.sellerEmail,
             sellerName: this.props.navigation.state.params.book.sellerName,
             publishingDate: this.props.navigation.state.params.book.publishingDate,
-            data: [[{type: "DUMMY", price: 12}]]
+            data: [[{type: "DUMMY", price: 12},{type: "DUMMY2", price: 22}]]
         };
-        AsyncStorage.getAllKeys().then((keys) => {
-            lst = [];
-            for (k in keys) {
-                AsyncStorage.getItem(keys[k]).then((bk) => {
-                    book = JSON.parse(bk);
-                    lst.push([{type: book.title, price: parseFloat(book.price)}])
-                    this.setState({data: lst})
-
-                });
+        this.auth = global.firebaseApp.auth();
+        this.auth.onAuthStateChanged((user) => {
+            if(user){
+                this.dbRef = global.firebaseApp.database().ref().child('books');
+                this.dbRefUsers = global.firebaseApp.database().ref().child('users/' + user.uid);
             }
-        });
+        })
     }
 
     render() {
@@ -91,25 +88,39 @@ export class DetailViewBook extends React.Component {
                                     this.setState({publishingDate: date})
                                 }}
                     />
-                    <Button title="DELETE" color='#660000' onPress={() => {
-                        AsyncStorage.removeItem(this.props.navigation.state.params.book.title).then(() => {
-                            this.props.navigation.state.params.stateModified();
-                            this.props.navigation.goBack();
+                    <Button title="BUY" color='#660000' onPress={() => {
+                        this.dbRefUsers.on('value',(snap)=>{
+                            if(snap.val().email != this.state.sellerEmail) {
+                                this.dbRef.child(this.props.navigation.state.params.book.title).remove().then(() => {
+                                    this.props.navigation.state.params.stateModified();
+                                    this.props.navigation.goBack();
+                                })
+                            }
+                            else{
+                                Alert.alert("You cannot buy your own book!")
+                            }
                         });
-                    }
-                    }
+                        }}
                     />
                     <Button title="SAVE CHANGES" onPress={() => {
-                        AsyncStorage.mergeItem(this.props.navigation.state.params.book.title, JSON.stringify({
-                                price: this.state.price,
-                                sellerEmail: this.state.sellerEmail,
-                                sellerName: this.state.sellerName,
-                                publishingDate: this.state.publishingDate
-                            })
-                        ).then(() => {
-                            this.props.navigation.state.params.stateModified();
-                            this.props.navigation.goBack();
-                        })
+                        this.dbRefUsers.on('value',(snap)=>{
+                                if(snap.val().email == this.state.sellerEmail) {
+                                    this.dbRef.child(this.props.navigation.state.params.book.title).set({
+                                        title: this.props.navigation.state.params.book.title,
+                                        price: this.state.price,
+                                        sellerEmail: this.state.sellerEmail,
+                                        sellerName: this.state.sellerName,
+                                        publishingDate: this.state.publishingDate,
+                                        description: "def descr"
+                                    }).then(() => {
+                                        this.props.navigation.state.params.stateModified();
+                                        this.props.navigation.goBack();
+                                    });
+                                }
+                                else{
+                                    Alert.alert("This is not your book, you can only buy it!")
+                                }
+                            });
                     }
                     }
                     />

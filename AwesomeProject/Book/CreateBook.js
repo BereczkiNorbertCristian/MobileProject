@@ -8,12 +8,17 @@ export class CreateBook extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isbn: "",
             title: "",
-            author: "",
-            nrPages: "",
-            endDate: new Date()
+            price: "",
+            sellerName: "",
+            email: this.props.navigation.state.params.email,
         }
+        this.auth = global.firebaseApp.auth();
+        this.auth.onAuthStateChanged((user) => {
+            if(user){
+                this.dbRefBooks = global.firebaseApp.database().ref().child('books')
+            }
+        })
     }
 
     render() {
@@ -21,7 +26,7 @@ export class CreateBook extends React.Component {
             <View>
                 <TextInput placeholder="Title" onChangeText={(title) => this.setState({title})}></TextInput>
                 <TextInput placeholder="Price" onChangeText={(price) => this.setState({price})}/>
-                <TextInput placeholder="Seller Email" onChangeText={(sellerEmail) => this.setState({sellerEmail})}/>
+                <TextInput placeholder={this.state.email}/>
                 <TextInput placeholder="Seller Name" onChangeText={(sellerName) => this.setState({sellerName})}/>
                 <DatePicker date={this.state.publishingDate}
                             mode="date"
@@ -31,13 +36,14 @@ export class CreateBook extends React.Component {
                             }}
                 />
                 <Button title="ADD" onPress={() => {
-                    AsyncStorage.setItem(this.state.title, JSON.stringify({
+                    this.dbRefBooks.child(this.state.title).set({
                         title: this.state.title,
+                        description: "default description",
                         price: this.state.price,
-                        sellerEmail: this.state.sellerEmail,
+                        sellerEmail: this.state.email,
                         sellerName: this.state.sellerName,
                         publishingDate: this.state.publishingDate
-                    })).then(() => {
+                    }).then(() => {
                         this.props.navigation.state.params.stateModified();
                         this.props.navigation.goBack();
                     });

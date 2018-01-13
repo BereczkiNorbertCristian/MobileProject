@@ -4,44 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ubbcluj.bnorbert.bookuseller.MainActivity">
+    tools:context="ubbcluj.bnorbert.bookuseller.activities.SignUpActivity">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="344dp"
         android:layout_height="495dp"
         android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
         <EditText
-            android:id="@+id/emailText"
+            android:id="@+id/nameUpText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
+        <EditText
+            android:id="@+id/emailUpText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textEmailAddress"
-            android:text="e-mail" />
+            android:text="E-maill" />
 
         <EditText
-            android:id="@+id/passwordText"
+            android:id="@+id/passwordUpText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPassword"
-            android:text="*****" />
+            android:text="****" />
 
-        <Button
-            android:id="@+id/signInButton"
+        <CheckBox
+            android:id="@+id/isPremium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="signIn"
-            android:text="SIGN IN" />
+            android:text="Premium" />
 
         <Button
-            android:id="@+id/signUpButton"
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="signUp"
-            android:text="SIGN UP" />
+            android:onClick="registerUser"
+            android:text="REGISTER" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

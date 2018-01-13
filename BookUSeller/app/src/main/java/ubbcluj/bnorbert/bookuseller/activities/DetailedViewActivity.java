@@ -8,12 +8,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,13 +33,17 @@ public class DetailedViewActivity extends AppCompatActivity implements DatePicke
 
     BookDao bookDao;
     private Long bookId;
-    private EditText titleET;
     private EditText descriptionET;
     private EditText priceET;
-    private EditText sellerEmailET;
     private EditText sellerNameET;
     private EditText publishingDateET;
     private PieChart pieChart;
+    private TextView emailView;
+    private TextView titleView;
+    private Boolean sameUser = false;
+
+    FirebaseAuth firebaseAuth;
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,47 +57,66 @@ public class DetailedViewActivity extends AppCompatActivity implements DatePicke
         publishingDateET.setOnClickListener(this);
         bookDao = DatabaseProvider.getInstance(getApplicationContext()).getBookDao();
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("books");
+
+        sameUser = firebaseAuth.getCurrentUser().getEmail().equals(book.getSellerEmail());
+
         setPieChart();
     }
 
     private Book makeBookFromCurrentState(){
         return new Book()
                 .withId(bookId)
-                .withTitle(titleET.getText().toString())
+                .withTitle(titleView.getText().toString())
                 .withDescription(descriptionET.getText().toString())
                 .withSellerName(sellerNameET.getText().toString())
-                .withSellerEmail(sellerEmailET.getText().toString())
+                .withSellerEmail(emailView.getText().toString())
                 .withPrice(Double.parseDouble(priceET.getText().toString()))
                 .withPublishingDate(publishingDateET.getText().toString());
     }
 
     public void updateBook(View view) {
-        bookDao.update(makeBookFromCurrentState());
-        finish();
+        if(sameUser) {
+            Book updatedBook = makeBookFromCurrentState();
+            bookDao.update(makeBookFromCurrentState());
+            databaseReference.child(updatedBook.getTitle()).setValue(updatedBook);
+            finish();
+        }
+        else{
+            Toast.makeText(this, "This is not your book to update", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void deleteBook(View view) {
-        bookDao.delete(makeBookFromCurrentState());
-        finish();
+        if(!sameUser) {
+            bookDao.delete(makeBookFromCurrentState());
+            databaseReference.child(titleView.getText().toString()).removeValue();
+            finish();
+        }
+        else{
+            Toast.makeText(this, "You cannot buy your own book!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initEditTexts() {
         pieChart = (PieChart) findViewById(R.id.details_chart);
-        titleET = (EditText) findViewById(R.id.titleEditText);
+        titleView = (TextView) findViewById(R.id.titleView);
         descriptionET = (EditText) findViewById(R.id.descriptionEditText);
         priceET = (EditText) findViewById(R.id.priceEditText);
-        sellerEmailET = (EditText) findViewById(R.id.sellerEmailEditText);
+
+        emailView = (TextView) findViewById(R.id.emailView);
         sellerNameET = (EditText) findViewById(R.id.sellerNameEditText);
         publishingDateET = (EditText) findViewById(R.id.publishingDateEditText);
     }
 
     private void doEditTextSetText(Book book) {
         bookId = book.getId();
-        titleET.setText(book.getTitle());
+        titleView.setText(book.getTitle());
         descriptionET.setText(book.getDescription());
         priceET.setText(book.getPrice().toString());
         sellerNameET.setText(book.getSellerName());
-        sellerEmailET.setText(book.getSellerEmail());
+        emailView.setText(book.getSellerEmail());
         publishingDateET.setText(book.getPublishingDate());
 
     }

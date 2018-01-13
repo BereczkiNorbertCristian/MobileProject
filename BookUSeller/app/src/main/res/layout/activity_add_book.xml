@@ -46,14 +46,6 @@
             android:text="Seller Name" />
 
         <EditText
-            android:id="@+id/sellerEmailEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:text="seller@email.com" />
-
-        <EditText
             android:id="@+id/publishingDateEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

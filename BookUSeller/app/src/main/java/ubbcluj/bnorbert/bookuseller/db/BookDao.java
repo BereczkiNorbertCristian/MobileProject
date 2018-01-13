@@ -19,6 +19,9 @@ public interface BookDao {
     @Query("select * from Book")
     List<Book> findAll();
 
+    @Query("SELECT * FROM Book WHERE title = :title")
+    Book findOne(String title);
+
     @Insert
     void save(Book... books);
 
@@ -27,4 +30,7 @@ public interface BookDao {
 
     @Delete
     void delete(Book... books);
+
+    @Query("DELETE FROM Book")
+    void deleteAll();
 }

@@ -13,13 +13,12 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
-        <EditText
-            android:id="@+id/titleEditText"
+        <TextView
+            android:id="@+id/titleView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Title" />
+            android:text="Title"
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/descriptionEditText"
@@ -45,19 +44,19 @@
             android:text="Name" />
 
         <EditText
-            android:id="@+id/sellerEmailEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textEmailAddress" />
-
-        <EditText
             android:id="@+id/publishingDateEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name" />
+
+        <TextView
+            android:id="@+id/emailView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/updateButton"
@@ -71,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="deleteBook"
-            android:text="Delete" />
+            android:text="BUY" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/details_chart"

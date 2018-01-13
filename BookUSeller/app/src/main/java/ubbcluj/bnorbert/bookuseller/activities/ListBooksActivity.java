@@ -12,6 +12,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import ubbcluj.bnorbert.bookuseller.R;
@@ -22,7 +29,9 @@ import ubbcluj.bnorbert.bookuseller.model.Book;
 
 import static ubbcluj.bnorbert.bookuseller.Constants.BOOK_KEY;
 
-public class ListBooksActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ListBooksActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, ValueEventListener {
+
+    private static final String BOOKS_TABLE = "books";
 
     List<Book> books;
     BookDao bookDao;
@@ -36,7 +45,12 @@ public class ListBooksActivity extends AppCompatActivity implements AdapterView.
 
         AppDatabase db = DatabaseProvider.getInstance(getApplicationContext());
         bookDao = db.getBookDao();
-        books = bookDao.findAll();
+        books = new ArrayList<>();
+
+        FirebaseDatabase
+                .getInstance()
+                .getReference(BOOKS_TABLE)
+                .addValueEventListener(this);
 
         bookAdapter = new BookAdapter(this,books);
         bookList.setAdapter(bookAdapter);
@@ -61,6 +75,26 @@ public class ListBooksActivity extends AppCompatActivity implements AdapterView.
         intent.putExtra(BOOK_KEY, clickedBook);
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+
+        for(DataSnapshot bookSnapshot : dataSnapshot.getChildren()) {
+            Book book = bookSnapshot.getValue(Book.class);
+            if(bookDao.findOne(book.getTitle()) == null)
+                bookDao.save(book);
+            else
+                bookDao.update(book);
+        }
+        books.clear();
+        books.addAll(bookDao.findAll());
+        bookAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
     }
 
 

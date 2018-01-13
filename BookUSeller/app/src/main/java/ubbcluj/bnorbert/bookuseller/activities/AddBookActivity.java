@@ -11,6 +11,10 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Calendar;
 
 import ubbcluj.bnorbert.bookuseller.R;
@@ -30,9 +34,13 @@ public class AddBookActivity extends AppCompatActivity implements DatePickerDial
     private EditText    publishingDateET;
     private EditText    titleET;
     private EditText    sellerNameET;
-    private EditText    sellerEmailET;
     private EditText    priceET;
     private EditText    descriptionET;
+
+    private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
+
+    private String sellerEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +49,6 @@ public class AddBookActivity extends AppCompatActivity implements DatePickerDial
 
         titleET = (EditText) findViewById(R.id.titleEditText);
         priceET = (EditText) findViewById(R.id.priceEditText);
-        sellerEmailET = (EditText) findViewById(R.id.sellerEmailEditText);
         sellerNameET = (EditText) findViewById(R.id.sellerNameEditText);
         descriptionET = (EditText) findViewById(R.id.descriptionEditText);
         publishingDateET = (EditText) findViewById(R.id.publishingDateEditText);
@@ -51,16 +58,22 @@ public class AddBookActivity extends AppCompatActivity implements DatePickerDial
         AppDatabase appDatabase = DatabaseProvider.getInstance(getApplicationContext());
         bookDao = appDatabase.getBookDao();
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("books");
+
+        sellerEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
     }
 
     public void addNewBook(View view){
-        bookDao.save(new Book()
+        Book book = new Book()
                 .withTitle(titleET.getText().toString())
                 .withDescription(descriptionET.getText().toString())
                 .withPrice(Double.parseDouble(priceET.getText().toString()))
-                .withSellerEmail(sellerEmailET.getText().toString())
+                .withSellerEmail(sellerEmail)
                 .withSellerName(sellerNameET.getText().toString())
-                .withPublishingDate(publishingDateET.getText().toString()));
+                .withPublishingDate(publishingDateET.getText().toString());
+        bookDao.save(book);
+        databaseReference.child(book.getTitle()).setValue(book);
         finish();
     }
 
@@ -110,7 +123,7 @@ public class AddBookActivity extends AppCompatActivity implements DatePickerDial
         String description = unwrap(R.id.descriptionEditText);
         Double price = Double.parseDouble(unwrap(R.id.priceEditText));
         String sellerName = unwrap(R.id.sellerNameEditText);
-        String sellerEmail = unwrap(R.id.sellerEmailEditText);
+        String sellerEmail = this.sellerEmail;
 
         return new StringBuilder()
                 .append("Title: ").append(title).append(NEW_LINE)
